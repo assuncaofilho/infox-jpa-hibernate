@@ -147,7 +147,7 @@ public class DaoGeneric<E> {
 		List<E> lista = null;
 	
 			
-			/*UtilizaÃ§Ã£o de JPQL*/
+			/*Utilização de JPQL*/
 			lista = entityManager.createQuery("from " + entity.getClass().getSimpleName()).getResultList();
 		
 		

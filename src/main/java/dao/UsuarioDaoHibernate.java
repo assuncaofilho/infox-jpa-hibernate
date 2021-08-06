@@ -14,22 +14,27 @@ import connection.ConexaoUtil;
 import connection.HibernateUtil;
 import model.Usuario;
 
-public class UsuarioDaoJdbc implements UsuarioDao {
+public class UsuarioDaoHibernate implements UsuarioDao {
 	
 	private EntityManager entityManager;
 	
-	private Connection connection;
+	private Connection connection; // remover após finalizar a impl
 	
-	public UsuarioDaoJdbc() {
+	private DaoGeneric<Usuario> daoGeneric = new DaoGeneric<Usuario>();
+	
+	
+	public UsuarioDaoHibernate() {
 		entityManager = HibernateUtil.getEntityManager();
 	}
 	
+	
 	public boolean validarAutenticacao(Usuario user) throws Exception {
 		
-		List<Usuario> logado =  entityManager.createNativeQuery("select * from tbusuarios where login = '"+user.getLogin()+"' and senha = '"+user.getSenha()+"'").getResultList();
+		Usuario logado = (Usuario) entityManager.createNativeQuery("select * from tbusuarios where login = "
+				+ "'"+user.getLogin()+"' and senha = '"+user.getSenha()+"'",Usuario.class).getSingleResult();
 		
 		
-		if(logado.size() == 1) {
+		if(logado != null) {
 			return true;
 		}
 		
@@ -40,36 +45,13 @@ public class UsuarioDaoJdbc implements UsuarioDao {
 public Usuario gravarUsuario(Usuario objeto) throws Exception {
 		
 		if (objeto.isNovo()) {/*Grava um novo*/
-		
-		String gravar = "insert into tbusuarios (iduser, nome, telefone, login, senha, perfil) "
-		        + "values (default, ?, ?, ?, ?, ?)";
-		PreparedStatement pst = connection.prepareStatement(gravar);
-		
-		 pst.setString(1, objeto.getNome());
-         pst.setString(2, objeto.getFone());
-         pst.setString(3, objeto.getLogin());
-         pst.setString(4, objeto.getSenha());
-         pst.setString(5, objeto.getPerfil());
-		
-		pst.execute();
-		
-		connection.commit();
+			
+			daoGeneric.salvar(objeto);
+
 		
 		}else {
-			String sql = "UPDATE tbusuarios SET nome=?, telefone=?, login=?, senha=?, perfil=? WHERE iduser =  "+objeto.getId()+";";
-			
-			PreparedStatement pst = connection.prepareStatement(sql);
-			
-			 pst.setString(1, objeto.getNome());
-	         pst.setString(2, objeto.getFone());
-	         pst.setString(3, objeto.getLogin());
-	         pst.setString(4, objeto.getSenha());
-	         pst.setString(5, objeto.getPerfil());
-			
-			pst.executeUpdate();
-			
-			connection.commit();
-			
+
+			daoGeneric.updateMerge(objeto);
 		}
 		
 		
@@ -110,30 +92,9 @@ public Usuario gravarUsuario(Usuario objeto) throws Exception {
 	
 	public List<Usuario> listar() throws Exception {
 		
-		List<Usuario> retorno = new ArrayList<Usuario>();
+		List<Usuario> list = daoGeneric.listar(Usuario.class);
 		
-		String pesquisar = "select * from tbusuarios;";
-		PreparedStatement statement = connection.prepareStatement(pesquisar);
-		
-		ResultSet resultado = statement.executeQuery();
-		
-		while (resultado.next()) { /*percorrer as linhas de resultado do SQL*/
-			
-			Usuario usuario = new Usuario();
-			
-			
-			usuario.setId(resultado.getInt("iduser"));
-			usuario.setNome(resultado.getString("nome"));
-			usuario.setFone(resultado.getString("telefone"));
-			usuario.setLogin(resultado.getString("login"));
-			usuario.setSenha(resultado.getString("senha"));
-			usuario.setPerfil(resultado.getString("perfil"));
-			
-			retorno.add(usuario);
-		}
-		
-		
-		return retorno;
+		return list;
 	}
 	
 	public Usuario consultaUsuario(String login) throws Exception  {

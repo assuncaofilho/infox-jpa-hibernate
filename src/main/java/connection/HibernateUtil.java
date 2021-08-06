@@ -32,6 +32,7 @@ public abstract class HibernateUtil {
 	
 	public synchronized static Object getPrimaryKey(Object entity) { // retorna a chave primária de um Object passado;
 		return entityManagerFactory.getPersistenceUnitUtil().getIdentifier(entity);
+		
 	}
 
 }

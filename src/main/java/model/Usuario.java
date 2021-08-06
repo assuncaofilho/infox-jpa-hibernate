@@ -27,7 +27,9 @@ public class Usuario implements Serializable {
 	@Column(name = "telefone")
 	private String fone;
 	
+	@Column(name = "login", unique = true)
 	private String login;
+	
 	private String senha;
 	private String perfil;
 	

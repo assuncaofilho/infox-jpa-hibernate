@@ -5,28 +5,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
 import connection.ConexaoUtil;
+import connection.HibernateUtil;
 import model.Usuario;
 
 public class UsuarioDaoJdbc implements UsuarioDao {
 	
+	private EntityManager entityManager;
+	
 	private Connection connection;
 	
 	public UsuarioDaoJdbc() {
-		connection = ConexaoUtil.getConnection();
+		entityManager = HibernateUtil.getEntityManager();
 	}
 	
 	public boolean validarAutenticacao(Usuario user) throws Exception {
 		
-		String validar = "select * from tbusuarios where login = ? and senha = ?";
+		List<Usuario> logado =  entityManager.createNativeQuery("select * from tbusuarios where login = '"+user.getLogin()+"' and senha = '"+user.getSenha()+"'").getResultList();
 		
-		PreparedStatement pst = connection.prepareStatement(validar);
-		pst.setString(1, user.getLogin());
-		pst.setString(2, user.getSenha());
 		
-		ResultSet rs = pst.executeQuery();
-		
-		if(rs.next()) {
+		if(logado.size() == 1) {
 			return true;
 		}
 		
@@ -137,24 +140,7 @@ public Usuario gravarUsuario(Usuario objeto) throws Exception {
 		
 		Usuario usuario = new Usuario();
 		
-		String sql = "select * from tbusuarios where login = ?;";
-		
-		PreparedStatement pst = connection.prepareStatement(sql);
-		
-		pst.setString(1, login);
-		ResultSet rs =  pst.executeQuery();
-		
-		while (rs.next()) /*Se tem resultado*/ {
-			
-			usuario.setId(rs.getInt("iduser"));
-			usuario.setNome(rs.getString("nome"));
-			usuario.setFone(rs.getString("telefone"));
-			usuario.setLogin(rs.getString("login"));
-			usuario.setSenha(rs.getString("senha"));
-			usuario.setPerfil(rs.getString("perfil"));
-			
-		}
-		
+		usuario = (Usuario) entityManager.createNativeQuery("select * from tbusuarios where login = '"+login+"';", Usuario.class).getSingleResult();
 		
 		return usuario;
 		

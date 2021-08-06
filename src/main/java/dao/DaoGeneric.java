@@ -4,14 +4,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.transaction.Transaction;
 
-import model.Usuario;
 import connection.HibernateUtil;
 
 public class DaoGeneric<E> {
 	
-	EntityManager entityManager = HibernateUtil.getEntityManager();
+	private EntityManager entityManager = HibernateUtil.getEntityManager();
 	
 	public void salvar(E entity) {
 		
@@ -41,7 +39,7 @@ public class DaoGeneric<E> {
 
 	}
 	
-	public E consultar(Long id, Class<E> entity) {
+	public E consultar(Integer id, Class<E> entity) {
 		
 		E buscada = (E) entityManager.find(entity, id);
 		
@@ -120,7 +118,7 @@ public class DaoGeneric<E> {
 		}
 	}
 	
-	public void deleteByID(Long id, Class<E> entity) {
+	public void deleteByID(Integer id, Class<E> entity) {
 		
 		
 		EntityTransaction transaction = entityManager.getTransaction();
@@ -147,24 +145,11 @@ public class DaoGeneric<E> {
 	public List<E> listar(E entity){
 		
 		List<E> lista = null;
-		EntityTransaction transaction = entityManager.getTransaction();
-		
-		try {
-			
-			transaction.begin();
+	
 			
 			/*Utilização de JPQL*/
 			lista = entityManager.createQuery("from " + entity.getClass().getSimpleName()).getResultList();
-			
-			transaction.commit();
-			
-			
-			
-		}catch(Exception e) {
-			transaction.rollback();
-			entityManager.close();
-			e.printStackTrace();
-		}
+		
 		
 		return lista;
 	}
@@ -173,23 +158,10 @@ public class DaoGeneric<E> {
 	public List<E> listar(Class<E> entity){
 		
 		List<E> lista = null;
-		EntityTransaction transaction = entityManager.getTransaction();
-		
-		try {
-			
-			transaction.begin();
+
 			
 			lista = entityManager.createQuery("from " + entity.getSimpleName()).getResultList();
 			
-			transaction.commit();
-			
-			
-			
-		}catch(Exception e) {
-			transaction.rollback();
-			entityManager.close();
-			e.printStackTrace();
-		}
 		
 		return lista;
 	}

@@ -42,7 +42,7 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 		
 	}
 	
-public Usuario gravarUsuario(Usuario objeto) throws Exception {
+	public Usuario gravarUsuario(Usuario objeto) throws Exception {
 		
 		if (objeto.isNovo()) {/*Grava um novo*/
 			
@@ -63,32 +63,14 @@ public Usuario gravarUsuario(Usuario objeto) throws Exception {
 	
 	public List<Usuario> consultaUsuarioList(String nome) throws Exception {
 		
-		List<Usuario> retorno = new ArrayList<Usuario>();
-		
-		String pesquisar = "select * from tbusuarios where nome like ?;";
-		PreparedStatement statement = connection.prepareStatement(pesquisar);
-		statement.setString(1, "%" + nome + "%");
-		
-		ResultSet resultado = statement.executeQuery();
-		
-		while (resultado.next()) { /*percorrer as linhas de resultado do SQL*/
+			List<Usuario> listagem = entityManager.createNativeQuery("select * from tbusuarios where nome like '%"+nome+"%'", Usuario.class).getResultList();
 			
-			Usuario usuario = new Usuario();
-			
-			
-			usuario.setId(resultado.getInt("iduser"));
-			usuario.setNome(resultado.getString("nome"));
-			usuario.setFone(resultado.getString("telefone"));
-			usuario.setLogin(resultado.getString("login"));
-			usuario.setSenha(resultado.getString("senha"));
-			usuario.setPerfil(resultado.getString("perfil"));
-			
-			retorno.add(usuario);
+			return listagem;
 		}
 		
 		
-		return retorno;
-	}
+	
+	
 	
 	public List<Usuario> listar() throws Exception {
 		
@@ -110,28 +92,8 @@ public Usuario gravarUsuario(Usuario objeto) throws Exception {
 	
 	public Usuario consultaUsuarioID(String id) throws Exception  {
 		
-		Usuario usuario = new Usuario();
+		 return daoGeneric.consultar(Integer.parseInt(id), Usuario.class);
 		
-		String sql = "select * from tbusuarios where iduser = ?;";
-		
-		PreparedStatement statement = connection.prepareStatement(sql);
-		statement.setInt(1, Integer.parseInt(id));
-		
-		ResultSet rs =  statement.executeQuery();
-		
-		if(rs.next()) /*Se tem resultado*/ {
-			
-			usuario.setId(rs.getInt("iduser"));
-			usuario.setNome(rs.getString("nome"));
-			usuario.setFone(rs.getString("telefone"));
-			usuario.setLogin(rs.getString("login"));
-			usuario.setSenha(rs.getString("senha"));
-			usuario.setPerfil(rs.getString("perfil"));
-			
-		}
-		
-		
-		return usuario;
 		
 	}
 	

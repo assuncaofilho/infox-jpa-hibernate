@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import dao.DaoFactory;
+import dao.DaoGeneric;
 import dao.UsuarioDao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,8 @@ public class ServletUsuarioController extends HttpServlet {
 	
 	
 	private UsuarioDao usuarioDao = DaoFactory.createUsuarioDao();
+	
+	private DaoGeneric<Usuario> daoGeneric = new DaoGeneric<Usuario>();
 
     public ServletUsuarioController() {
     }

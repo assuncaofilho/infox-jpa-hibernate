@@ -267,13 +267,13 @@ function buscaUsuarioAjax(){
 					data: "nomeBusca=" + nomeBusca + "&acao=buscarajax",
 					success: function (response) {
 						
-					//alert(response);
+					alert(response);
 						
 					var json = JSON.parse(response); // criacao do objeto em JavaScript
 					
 					//console.info(json);
 					
-					//alert(json[0].nome);
+					alert(json);
 						
 					document.getElementById("msgResult").textContent = ""+json.length+" resultado(s) para esta busca.";
 						

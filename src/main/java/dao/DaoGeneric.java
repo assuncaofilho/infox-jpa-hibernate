@@ -47,6 +47,8 @@ public class DaoGeneric<E> {
 		
 	}
 	
+	
+	
 	/*public void atualizar(E entity) {
 		
 		Object id = HibernateUtil.getPrimaryKey(entity);

@@ -1,9 +1,14 @@
 package dao;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Table;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import connection.HibernateUtil;
 
@@ -20,15 +25,15 @@ public class DaoGeneric<E> {
 		transaction.begin();
 		entityManager.persist(entity);
 		transaction.commit();
-		entityManager.close();
+	
 		
 		}catch(Exception e) {
 			transaction.rollback();
-			entityManager.close();
 			e.printStackTrace();
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public E consultar(E entity) {
 		
 		Object id = HibernateUtil.getPrimaryKey(entity);
@@ -49,31 +54,7 @@ public class DaoGeneric<E> {
 	
 	
 	
-	/*public void atualizar(E entity) {
-		
-		Object id = HibernateUtil.getPrimaryKey(entity);
-		
-		E toUpdate = (E) entityManager.find(entity.getClass(), id);
-		
-		toUpdate = entity;
-		
-		EntityTransaction transaction = entityManager.getTransaction();
-		
-		try {
-			
-		transaction.begin();
-		entityManager.persist(toUpdate);
-		transaction.commit();
-		entityManager.close();
-		
-		}catch(Exception e) {
-			transaction.rollback();
-			entityManager.close();
-			e.printStackTrace();
-		}
-		
-	}*/
-	
+
 	public E updateMerge(E entity) { // salva ou atualiza
 		
 		EntityTransaction transaction = entityManager.getTransaction();
@@ -85,65 +66,41 @@ public class DaoGeneric<E> {
 		transaction.begin();
 		entidadeSalva = entityManager.merge(entity);
 		transaction.commit();
-		entityManager.close();
 		
 		}catch(Exception e) {
 			transaction.rollback();
-			entityManager.close();
 			e.printStackTrace();
 		}
 		
 		return entidadeSalva;
 	}
 	
-	public void deleteByID(E entity) {
-		
-		Object id = HibernateUtil.getPrimaryKey(entity);
-		
-		EntityTransaction transaction = entityManager.getTransaction();
-		
-		try {
-			transaction.begin();
-			
-			entityManager.createNativeQuery("delete from " + 
-			entity.getClass().getSimpleName().toLowerCase() + 
-			" where id = " + id).executeUpdate();
-			
-			transaction.commit();
-			entityManager.close();
-			
-		
-		}catch(Exception e) {
-			transaction.rollback();
-			entityManager.close();
-			e.printStackTrace();
-		}
-	}
+
 	
 	public void deleteByID(Integer id, Class<E> entity) {
 		
 		
 		EntityTransaction transaction = entityManager.getTransaction();
 		
+		
 		try {
 			transaction.begin();
-			/*UtilizaÃ§Ã£o de SQL nativo*/
+			/*Utilização de SQL nativo*/
 			entityManager.createNativeQuery("delete from " + 
-			entity.getSimpleName().toLowerCase() + 
-			" where id = " + id).executeUpdate();
-			
+			DaoGeneric.getTableName(entityManager, entity) + 
+			" where "+DaoGeneric.getColumnNameID(entityManager, entity)+" = "+id+"").executeUpdate();
 			transaction.commit();
-			entityManager.close();
+			
 			
 		
 		}catch(Exception e) {
 			transaction.rollback();
-			entityManager.close();
 			e.printStackTrace();
 		}
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<E> listar(E entity){
 		
 		List<E> lista = null;
@@ -157,6 +114,7 @@ public class DaoGeneric<E> {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<E> listar(Class<E> entity){
 		
 		List<E> lista = null;
@@ -171,6 +129,37 @@ public class DaoGeneric<E> {
 	
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+	
+	
+
+	public static <T> String getTableName(EntityManager em, Class<T> entityClass) {
+		
+		Metamodel meta = em.getMetamodel();
+		
+	    EntityType<T> entityType = meta.entity(entityClass);
+
+	    Table t = entityClass.getAnnotation(Table.class);
+
+	    String tableName = (t == null)? entityType.getName().toLowerCase(): t.name();
+	    
+	    
+	    return tableName;
+	}
+	
+	public static <T> String getColumnNameID(EntityManager em, Class<T> entityClass) throws NoSuchFieldException, SecurityException {
+		
+		Metamodel meta = em.getMetamodel();
+		
+		EntityType<T> entityType = meta.entity(entityClass);
+		
+		Field id = entityClass.getDeclaredField("id");
+		
+		Column c = id.getAnnotation(Column.class);
+		
+		String columnNameID = (c==null)? entityType.getName().toLowerCase():c.name();
+		
+		return columnNameID;
 	}
 	
 	

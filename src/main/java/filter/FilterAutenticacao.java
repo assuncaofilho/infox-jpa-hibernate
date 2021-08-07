@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.persistence.EntityManager;
+
 import connection.ConexaoUtil;
+import connection.HibernateUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -21,8 +24,8 @@ import jakarta.servlet.http.HttpSession;
 public class FilterAutenticacao implements Filter {
 	
 	
-	private static Connection connection;
-	
+	//private static Connection connection;
+	private static EntityManager entityManager;
 
     public FilterAutenticacao() {
     }
@@ -31,8 +34,8 @@ public class FilterAutenticacao implements Filter {
     /*Mataria os processo de conexão com banco*/
 	public void destroy() {
 		try {
-			connection.close();
-		} catch (SQLException e) {
+			entityManager.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -85,7 +88,7 @@ public class FilterAutenticacao implements Filter {
 				chain.doFilter(request, response);
 			}
 			
-			connection.commit();/*Deu tudo certo, então comita as alteracoes no banco de dados*/
+			//connection.commit();/*Deu tudo certo, então comita as alteracoes no banco de dados*/
 		
 	    }catch (Exception e) {
 			e.printStackTrace();
@@ -94,18 +97,14 @@ public class FilterAutenticacao implements Filter {
 			request.setAttribute("msg", e.getMessage());
 			redirecionar.forward(request, response);
 			
-			try {
-				connection.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 	}
 
 	/*Inicia os processos ou recursos quando o servidor sobe o projeto*/
 	// inicar a conexão com o banco
 	public void init(FilterConfig fConfig) throws ServletException {
-		connection = ConexaoUtil.getConnection();
+		//connection = ConexaoUtil.getConnection();
+		entityManager = HibernateUtil.getEntityManager();
 	}
 
 }

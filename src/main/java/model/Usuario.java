@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 /*Usuários do Sistema infoX*/
 
+
 @Entity
 @Table(name = "tbusuarios")
 public class Usuario implements Serializable {
@@ -88,8 +89,6 @@ public class Usuario implements Serializable {
 		return "Usuario [id=" + id + ", nome=" + nome + ", fone=" + fone + ", login=" + login + ", senha=" + senha
 				+ ", perfil=" + perfil + "]";
 	}
-	
-	
 	
 
 }

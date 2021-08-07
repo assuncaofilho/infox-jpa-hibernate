@@ -6,6 +6,7 @@ import javax.persistence.Persistence;
 
 public abstract class HibernateUtil {
 	
+	
 	private static EntityManagerFactory entityManagerFactory = null;
 	
 	static {

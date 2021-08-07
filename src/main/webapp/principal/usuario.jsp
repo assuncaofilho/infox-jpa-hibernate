@@ -197,6 +197,14 @@ function criarDelete(){
 	}
 }
 
+function atualizaTabela(){
+	
+	document.getElementById("formUser").method = 'get';
+	document.getElementById("acao").value = 'listarUsuarios';
+	document.getElementById("formUser").submit();
+	
+}
+
 function criarDeleteComAjax(){
 	
 	var idUsuario = document.getElementById("id").value;
@@ -217,6 +225,7 @@ function criarDeleteComAjax(){
 				limparForm();
 				document.getElementById("msg").textContent = "";
 				alert(response);
+				atualizaTabela();
 			}		
 		
 			}).fail(function(xhr, status, errorThrown){
@@ -267,13 +276,13 @@ function buscaUsuarioAjax(){
 					data: "nomeBusca=" + nomeBusca + "&acao=buscarajax",
 					success: function (response) {
 						
-					alert(response);
+					//alert(response);
 						
 					var json = JSON.parse(response); // criacao do objeto em JavaScript
 					
 					//console.info(json);
 					
-					alert(json);
+					//alert(json);
 						
 					document.getElementById("msgResult").textContent = ""+json.length+" resultado(s) para esta busca.";
 						

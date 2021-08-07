@@ -1,16 +1,9 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
 
-import connection.ConexaoUtil;
 import connection.HibernateUtil;
 import model.Usuario;
 
@@ -18,7 +11,7 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 	
 	private EntityManager entityManager;
 	
-	private Connection connection; // remover após finalizar a impl
+	//private Connection connection; NÃO ESTÁ SENDO UTILIZADO!!
 	
 	private DaoGeneric<Usuario> daoGeneric = new DaoGeneric<Usuario>();
 	
@@ -30,11 +23,12 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 	
 	public boolean validarAutenticacao(Usuario user) throws Exception {
 		
-		Usuario logado = (Usuario) entityManager.createNativeQuery("select * from tbusuarios where login = "
-				+ "'"+user.getLogin()+"' and senha = '"+user.getSenha()+"'",Usuario.class).getSingleResult();
+		@SuppressWarnings("unchecked")
+		List<Usuario> logado = entityManager.createNativeQuery("select * from tbusuarios where login = "
+				+ "'"+user.getLogin()+"' and senha = '"+user.getSenha()+"'",Usuario.class).getResultList();
 		
 		
-		if(logado != null) {
+		if(logado.size() == 1) {
 			return true;
 		}
 		
@@ -61,6 +55,7 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<Usuario> consultaUsuarioList(String nome) throws Exception {
 		
 			List<Usuario> listagem = entityManager.createNativeQuery("select * from tbusuarios where nome like '%"+nome+"%'", Usuario.class).getResultList();
@@ -79,13 +74,14 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 		return list;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
 	public Usuario consultaUsuario(String login) throws Exception  {
+	
 		
-		Usuario usuario = new Usuario();
+		List<Usuario> usuario = entityManager.createNativeQuery("select * from tbusuarios where login = '"+login+"';", Usuario.class).getResultList();
 		
-		usuario = (Usuario) entityManager.createNativeQuery("select * from tbusuarios where login = '"+login+"';", Usuario.class).getSingleResult();
-		
-		return usuario;
+		return usuario.get(0);
 		
 	}
 	
@@ -99,31 +95,24 @@ public class UsuarioDaoHibernate implements UsuarioDao {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public boolean loginExiste(String login) throws Exception {
 		
-		String select = "select count(1) > 0 as existe from tbusuarios where login = ?;";
+		List<Usuario> usuarios = entityManager.createNativeQuery(
+				"select * from tbusuarios where login = '"+login+"';", Usuario.class).getResultList();
 		
-		PreparedStatement pst = connection.prepareStatement(select);
-		pst.setString(1, login);
+		if (usuarios.size() > 0) {
+			return true;
+		}
 		
-		ResultSet rs = pst.executeQuery();
-		
-		rs.next(); //inicia o ponteiro apontando para a primeira ocorrencia do ResultSet;
-		return rs.getBoolean("existe"); 
-		
+		return false;
 	}
 	
 	
 	public void deletarUser(String idUser) throws Exception {
-		String sql = "DELETE FROM tbusuarios WHERE iduser = ?;";
 		
-		PreparedStatement prepareSql = connection.prepareStatement(sql);
+		daoGeneric.deleteByID(Integer.parseInt(idUser), Usuario.class);
 		
-		prepareSql.setInt(1, Integer.parseInt(idUser));
-		
-		prepareSql.executeUpdate();
-		
-		connection.commit();
 		
 	}
 

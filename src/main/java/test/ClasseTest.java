@@ -1,6 +1,7 @@
 package test;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import connection.HibernateUtil;
 import dao.DaoGeneric;
+import model.Cliente;
 import model.Usuario;
 
 public class ClasseTest {
@@ -104,6 +106,22 @@ public class ClasseTest {
 		String columnNameID = (c==null)? Usuario.class.getSimpleName().toLowerCase():c.name();
 		
 		System.out.println(columnNameID);
+		
+		
+	}
+	
+	@Test
+	public void testeListarClientes() {
+		
+		DaoGeneric<Cliente> daoGeneric = new DaoGeneric<Cliente>();
+		
+		List<Cliente> listClientes = daoGeneric.listar(new Cliente());
+		
+		for(Cliente clientes: listClientes) {
+			System.out.println(clientes);
+			System.out.println("------------------------------");
+		}
+		
 		
 		
 	}

@@ -224,7 +224,7 @@ function criarDeleteComAjax(){
 			success: function (response) {
 				limparForm();
 				document.getElementById("msg").textContent = "";
-				alert(response);
+				alert(response); //mostra que foi exluído
 				atualizaTabela();
 			}		
 		

@@ -193,6 +193,14 @@ function criarDelete(){
 	}
 }
 
+function atualizaTabela(){
+	
+	document.getElementById("formCli").method = 'get';
+	document.getElementById("acao").value = 'listarClientes';
+	document.getElementById("formCli").submit();
+	
+}
+
 function criarDeleteComAjax(){
 	
 	var idCliente = document.getElementById("id").value;
@@ -212,7 +220,8 @@ function criarDeleteComAjax(){
 			success: function (response) {
 				limparForm();
 				document.getElementById("msg").textContent = "";
-				alert(response);
+				alert(response); // mostra que foi excluído
+				atualizaTabela();
 			}		
 		
 			}).fail(function(xhr, status, errorThrown){

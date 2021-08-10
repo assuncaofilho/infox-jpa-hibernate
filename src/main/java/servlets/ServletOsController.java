@@ -63,6 +63,7 @@ public class ServletOsController extends HttpServlet {
 	}
 	
 	
+	
 	/*private List<Os> atualizarOs() {
 
 		try {
@@ -110,6 +111,7 @@ public class ServletOsController extends HttpServlet {
 		 else if (acao != null && !acao.isEmpty() && acao.equals("deletarajax")) {
 				 
 				 String id = request.getParameter("id");
+				 
 				 
 				 osDao.excluir(id);
 				 
@@ -163,7 +165,6 @@ public class ServletOsController extends HttpServlet {
 			 	
 			 	List<Os> allOs = osDao.listar();
 			 	request.setAttribute("allOs", allOs);
-			 	//request.setAttribute("msg", allOs.get(0).getId() + "e" + allOs.get(1).getId());
 			 	request.getRequestDispatcher("principal/os.jsp").forward(request, response);
 			 
 			 

@@ -233,4 +233,6 @@ FOREIGN KEY(idtec) REFERENCES tbusuarios(iduser);
 -----------------------------------------------
 -----------------------------------------------
 
+alter table tbos modify column data_os timestamp default current_timestamp null;
+
 

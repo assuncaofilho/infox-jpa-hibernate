@@ -509,16 +509,16 @@ function imprimirOs(){
 			alert("Busque ou cadastre uma OS para imprimir.");
 		}
 	}
+	
+function atualizaTabela(){
+	
+	document.getElementById("formOS").method = 'get';
+	document.getElementById("acao").value = 'listarOs';
+	document.getElementById("formOS").submit();
+	
+}
 
 	function criarDeleteComAjax() {
-
-		//var count = 0;
-
-		//for(p=0;p<elementos.legth;p++){
-		//	if(elementos[p].value != null && elementos[p].value != "" && elementos[p].trim() != ""){
-		//		count = count + 1;
-		//	}
-		//}
 
 		var idOs = document.getElementById("id").value;
 
@@ -527,18 +527,20 @@ function imprimirOs(){
 			if (confirm("Deseja realmente excluir esta OS?")) {
 
 				var urlAction = document.getElementById("formOS").action;
-				var id = document.getElementById("id").value;
+				
+				
 
 				$.ajax({
 
 					method : "get",
 					url : urlAction,
-					data : "id=" + id + "&acao=deletarajax",
+					data : "id=" + idOs + "&acao=deletarajax",
 					success : function(response) {
 
 						limparNovaOs();
 						document.getElementById("msg").textContent = "";
 						alert(response);
+						atualizaTabela();
 
 					}
 

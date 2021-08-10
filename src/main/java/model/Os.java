@@ -2,12 +2,31 @@ package model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.annotation.Generated;
+
+@Entity
+@Table(name = "tbos")
 public class Os implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "os")
 	private Integer id;
+	
+	@Column(name = "data_os", insertable = false , updatable = false)
     private String data;
+	
     private String tipo;
     private String situacao;
     private String equipamento;
@@ -91,6 +110,14 @@ public class Os implements Serializable {
 	
 	public void setIdtec(Integer idtec) {
 		this.idtec = idtec;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Os [id=" + id + ", data=" + data + ", tipo=" + tipo + ", situacao=" + situacao + ", equipamento="
+				+ equipamento + ", defeito=" + defeito + ", servico=" + servico + ", valor=" + valor + ", idcli="
+				+ idcli + ", idtec=" + idtec + "]";
 	}
 	
 	

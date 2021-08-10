@@ -1,12 +1,6 @@
 package servlets;
 
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.imageio.ImageIO;
 
 import connection.ConexaoUtil;
 import jakarta.servlet.RequestDispatcher;
@@ -71,11 +65,7 @@ public class RelatorioServlet extends HttpServlet {
 			/*Caminho relativo do arquivo jasper*/
 			String caminhoJasper = "WEB-INF/report/"+nomearquivo+".jasper";
 			
-			/*caminho relativo do arquivo de img do ícone*/
-			String caminhoIcone = "WEB-INF/icons/X.png";
 			 
-			//HashMap<String, Object> param = new HashMap<String, Object>();
-			//param.put("EMPRESA", empresa);
 			
 			byte[] bytes = null;
 			
@@ -85,27 +75,10 @@ public class RelatorioServlet extends HttpServlet {
 				JasperReport relatorio = (JasperReport) JRLoader.loadObjectFromFile(
 						context.getRealPath(caminhoJasper));
 				
-				if(!acao.equals("imprimirOs")) {
+				if(acao.equals("relcli") || acao.equals("relserv")) {
 				
 				bytes = JasperRunManager.runReportToPdf(relatorio, null, ConexaoUtil.getConnection());
 				
-				}else if(acao.equals("imprimirOs")) {
-					
-		
-				InputStream is = new FileInputStream(context.getRealPath(caminhoIcone));
-				
-				BufferedImage image = ImageIO.read(is);
-				
-				//File sourceimage = new File("source.gif");
-		        //image = ImageIO.read(sourceimage);
-				
-				HashMap<String, Object> param = new HashMap<String, Object>();
-				param.put("os", request.getParameter("idostoprint"));
-				param.put("logo", image );
-				
-				
-				bytes = JasperRunManager.runReportToPdf(relatorio, param, ConexaoUtil.getConnection());
-					
 				}
 				
 			} catch (JRException e) {
